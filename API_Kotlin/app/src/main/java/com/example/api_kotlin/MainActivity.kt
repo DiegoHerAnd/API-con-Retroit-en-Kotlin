@@ -4,24 +4,31 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.api_kotlin.ui.theme.API_KotlinTheme
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: InterpolViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             API_KotlinTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(modifier = Modifier.padding(innerPadding))
+                    MainScreen(
+                        uiState = viewModel.uiState,
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
@@ -29,42 +36,51 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
-    val initialList = listOf("Ana", "Juan", "Sofía", "Luis", "Elena", "Carlos")
+fun MainScreen(uiState: InterpolUiState, modifier: Modifier = Modifier) {
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredList = if (searchQuery.isBlank()) {
-        initialList
+        uiState.notices
     } else {
-        initialList.filter { it.contains(searchQuery, ignoreCase = true) }
+        uiState.notices.filter { it.fullName.contains(searchQuery, ignoreCase = true) }
     }
 
     Column(modifier = modifier.fillMaxSize()) {
-        // Barra de búsqueda
         TextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            label = { Text("Buscar nombre...") },
+            label = { Text("Buscar por nombre...") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         )
 
-        // Mostrar la lista
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(filteredList) { item ->
-                Card(
-                    modifier = Modifier.fillMaxWidth()
+        when {
+            uiState.isLoading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+            uiState.errorMessage != null -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Error: ${uiState.errorMessage}")
+                }
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = item,
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    items(filteredList, key = { it.entity_id }) { notice ->
+                        Card(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = notice.fullName,
+                                modifier = Modifier.padding(16.dp),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -73,8 +89,14 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun MainPreview() {
+fun MainScreenPreview() {
     API_KotlinTheme {
-        MainScreen()
+        val previewState = InterpolUiState(
+            notices = listOf(
+                Notice("2023-123", "John", "DOE"),
+                Notice("2023-456", "Jane", "SMITH")
+            )
+        )
+        MainScreen(uiState = previewState)
     }
 }

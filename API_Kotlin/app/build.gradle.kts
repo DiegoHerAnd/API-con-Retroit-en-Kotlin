@@ -5,9 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.api_kotlin"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.api_kotlin"
@@ -41,6 +39,9 @@ dependencies {
     // IMPLEMENTACIÓN RETROFIT PARA API (versiones actualizadas)
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+
+    // Material Icons Extended - NUEVA DEPENDENCIA
+    implementation("androidx.compose.material:material-icons-extended:1.7.5")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

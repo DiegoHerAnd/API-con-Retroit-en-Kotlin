@@ -6,6 +6,10 @@ Una aplicación Android desarrollada en Kotlin que consulta la API de Interpol p
 
 Esta aplicación consume la API oficial de Interpol (Red Notices) para obtener y mostrar en tiempo real información sobre personas buscadas internacionalmente. Presenta los datos en una interfaz moderna y fácil de usar desarrollada con Jetpack Compose y Material Design 3.
 
+## 🎥 Video Demostración
+
+[![Ver Demostración](https://img.youtube.com/vi/6OUtWggupp4/maxresdefault.jpg)](https://www.youtube.com/watch?v=6OUtWggupp4)
+
 ## ✨ Características Principales
 
 - **Consulta en Tiempo Real**: Obtiene datos actualizados de la API de Interpol
@@ -30,10 +34,6 @@ Esta aplicación consume la API oficial de Interpol (Red Notices) para obtener y
 - Detalles individuales de cada persona buscada
 - Avatares generados dinámicamente con iniciales
 - Contador de resultados en tiempo real
-
-## 🎥 Video Demostración
-
-
 
 ## 💻 Instalación
 
